@@ -1,15 +1,31 @@
 import { useState, useEffect, useRef } from 'react';
 import katImage from '../assets/kat.jpg';
+import AdminMenu from './AdminMenu';
 import './PomodoroTimer.css';
 
 const PomodoroTimer = () => {
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
+  // Settings state
+  const [settings, setSettings] = useState({
+    workMinutes: 25,
+    breakMinutes: 5,
+    longBreakMinutes: 15,
+    sessionsUntilLongBreak: 4
+  });
+
+  // Timer state
+  const [timeLeft, setTimeLeft] = useState(settings.workMinutes * 60);
   const [isActive, setIsActive] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
+  const [isLongBreak, setIsLongBreak] = useState(false);
+  const [completedSessions, setCompletedSessions] = useState(0);
+  
+  // Admin menu state
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  
   const intervalRef = useRef(null);
-
-  const workTime = 25 * 60; // 25 minutes
-  const breakTime = 5 * 60; // 5 minutes
+  const workTime = settings.workMinutes * 60;
+  const breakTime = settings.breakMinutes * 60;
+  const longBreakTime = settings.longBreakMinutes * 60;
 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
@@ -19,30 +35,84 @@ const PomodoroTimer = () => {
     } else if (timeLeft === 0) {
       // Timer finished
       setIsActive(false);
-      if (isBreak) {
+      if (isBreak || isLongBreak) {
         // Break finished, start work session
         setIsBreak(false);
+        setIsLongBreak(false);
         setTimeLeft(workTime);
       } else {
-        // Work session finished, start break
-        setIsBreak(true);
-        setTimeLeft(breakTime);
+        // Work session finished
+        const newCompletedSessions = completedSessions + 1;
+        setCompletedSessions(newCompletedSessions);
+        
+        if (newCompletedSessions % settings.sessionsUntilLongBreak === 0) {
+          // Time for long break
+          setIsLongBreak(true);
+          setTimeLeft(longBreakTime);
+        } else {
+          // Time for short break
+          setIsBreak(true);
+          setTimeLeft(breakTime);
+        }
       }
     } else {
       clearInterval(intervalRef.current);
     }
 
     return () => clearInterval(intervalRef.current);
-  }, [isActive, timeLeft, isBreak, workTime, breakTime]);
+  }, [isActive, timeLeft, isBreak, isLongBreak, completedSessions, settings, workTime, breakTime, longBreakTime]);
 
   const toggleTimer = () => {
     setIsActive(!isActive);
-  };
-
-  const resetTimer = () => {
+  };  const resetTimer = () => {
     setIsActive(false);
     setIsBreak(false);
+    setIsLongBreak(false);
+    setCompletedSessions(0);
     setTimeLeft(workTime);
+  };
+
+  // Navigation functions for admin menu
+  const skipToBreak = () => {
+    setIsActive(false);
+    setIsBreak(true);
+    setIsLongBreak(false);
+    setTimeLeft(breakTime);
+  };
+
+  const skipToLongBreak = () => {
+    setIsActive(false);
+    setIsBreak(false);
+    setIsLongBreak(true);
+    setTimeLeft(longBreakTime);
+  };
+
+  const skipToWork = () => {
+    setIsActive(false);
+    setIsBreak(false);
+    setIsLongBreak(false);
+    setTimeLeft(workTime);
+  };
+
+  const goBackSession = () => {
+    if (completedSessions > 0) {
+      setCompletedSessions(completedSessions - 1);
+    }
+    setIsActive(false);
+    setIsBreak(false);
+    setIsLongBreak(false);
+    setTimeLeft(workTime);
+  };
+
+  const handleSettingsChange = (newSettings) => {
+    setSettings(newSettings);
+    // Reset timer with new settings if not active
+    if (!isActive) {
+      setIsBreak(false);
+      setIsLongBreak(false);
+      setCompletedSessions(0);
+      setTimeLeft(newSettings.workMinutes * 60);
+    }
   };
 
   const formatTime = (seconds) => {
@@ -50,23 +120,53 @@ const PomodoroTimer = () => {
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
   const getProgress = () => {
-    const totalTime = isBreak ? breakTime : workTime;
+    let totalTime;
+    if (isLongBreak) {
+      totalTime = longBreakTime;
+    } else if (isBreak) {
+      totalTime = breakTime;
+    } else {
+      totalTime = workTime;
+    }
     return ((totalTime - timeLeft) / totalTime) * 100;
+  };
+
+  const getSessionType = () => {
+    if (isLongBreak) return 'Long Break';
+    if (isBreak) return 'Break Time';
+    return 'Focus Time';
   };
 
   const circumference = 2 * Math.PI * 160; // radius = 160
   const strokeDashoffset = circumference - (getProgress() / 100) * circumference;
-
   return (
     <div className="pomodoro-container">
-      <div className="timer-header">
-        <h1>{isBreak ? 'Break Time' : 'Focus Time'}</h1>
-        <p>Stay focused and productive!</p>
+      {/* Subtle settings icon in corner */}
+      <div className="settings-icon" onClick={() => setIsAdminOpen(!isAdminOpen)}>
+        ⚙️
       </div>
-      
-      <div className="timer-circle-container">        <svg className="timer-circle" width="360" height="360">
+        <AdminMenu 
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
+        settings={settings}
+        onSettingsChange={handleSettingsChange}
+        onSkipToBreak={skipToBreak}
+        onSkipToLongBreak={skipToLongBreak}
+        onSkipToWork={skipToWork}
+        onGoBackSession={goBackSession}
+        currentState={{ isBreak, isLongBreak, completedSessions }}
+      />
+
+      <div className="timer-header">
+        <h1>{getSessionType()}</h1>
+        <p>Stay focused and productive!</p>
+        {completedSessions > 0 && (
+          <p className="session-counter">Sessions completed: {completedSessions}</p>
+        )}
+      </div>
+        <div className="timer-circle-container">
+        <svg className="timer-circle" viewBox="0 0 360 360" width="360" height="360">
           {/* Background circle */}
           <circle
             cx="180"
@@ -84,7 +184,7 @@ const PomodoroTimer = () => {
             cy="180"
             r="160"
             fill="none"
-            stroke={isBreak ? "#E85A5A" : "#7B68EE"}
+            stroke={isBreak || isLongBreak ? "#E85A5A" : "#7B68EE"}
             strokeWidth="12"
             strokeLinecap="round"
             strokeDasharray={circumference}
@@ -115,12 +215,11 @@ const PomodoroTimer = () => {
         >
           Reset
         </button>
-      </div>
-
-      <div className="session-info">
+      </div>      <div className="session-info">
         <div className="session-type">
-          <span className={!isBreak ? 'active' : ''}>Work</span>
+          <span className={!isBreak && !isLongBreak ? 'active' : ''}>Work</span>
           <span className={isBreak ? 'active' : ''}>Break</span>
+          <span className={isLongBreak ? 'active' : ''}>Long Break</span>
         </div>
       </div>
     </div>

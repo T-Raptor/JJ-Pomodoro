@@ -16,8 +16,37 @@
   align-items: center;
   padding: 2rem;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--wheat) 0%, var(--thistle) 100%);
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
   font-family: 'Nunito', sans-serif;
+}
+
+.settings-icon {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(200, 206, 238, 0.3);
+  z-index: 100;
+}
+
+.settings-icon:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1) rotate(45deg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-color: rgba(200, 206, 238, 0.6);
 }
 
 .timer-header {
@@ -41,13 +70,27 @@
   font-weight: 600;
 }
 
+.session-counter {
+  font-size: 1rem !important;
+  color: #666 !important;
+  font-weight: 500 !important;
+  margin-top: 0.3rem !important;
+}
+
 .timer-circle-container {
   position: relative;
   margin: 2rem 0;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  justify-content: center;
 }
 
 .timer-circle {
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
+  width: 100%;
+  height: auto;
+  max-width: 360px;
 }
 
 .progress-circle {
@@ -147,9 +190,11 @@
 
 .session-type {
   display: flex;
-  gap: 2rem;
-  font-size: 1.2rem;
+  gap: 1.5rem;
+  font-size: 1.1rem;
   font-weight: 600;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .session-type span {
@@ -177,9 +222,8 @@
     font-size: 2rem;
   }
   
-  .timer-circle {
-    width: 300px;
-    height: 300px;
+  .timer-circle-container {
+    max-width: 300px;
   }
   
   .cat-image {
@@ -189,18 +233,38 @@
   
   .time-display {
     font-size: 2rem;
+    padding: 0.5rem 1rem;
   }
   
   .control-btn {
     padding: 0.8rem 1.5rem;
     font-size: 1rem;
   }
+  
+  .settings-icon {
+    top: 15px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .timer-circle {
-    width: 250px;
-    height: 250px;
+  .pomodoro-container {
+    padding: 0.5rem;
+  }
+  
+  .timer-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .timer-header p {
+    font-size: 1rem;
+  }
+  
+  .timer-circle-container {
+    max-width: 250px;
   }
   
   .cat-image {
@@ -211,14 +275,70 @@
   .time-display {
     font-size: 1.5rem;
     padding: 0.4rem 0.8rem;
+    letter-spacing: 1px;
   }
   
   .timer-controls {
     flex-direction: column;
     align-items: center;
+    gap: 0.5rem;
   }
   
   .control-btn {
     width: 150px;
+    padding: 0.8rem 1rem;
+  }
+  
+  .session-type {
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .session-type span {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .settings-icon {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .pomodoro-container {
+    padding: 0.25rem;
+  }
+  
+  .timer-header {
+    margin-bottom: 1rem;
+  }
+  
+  .timer-header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .timer-circle-container {
+    max-width: 200px;
+    margin: 1rem 0;
+  }
+  
+  .cat-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .time-display {
+    font-size: 1.2rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .control-btn {
+    width: 130px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
   }
 }

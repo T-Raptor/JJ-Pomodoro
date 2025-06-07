@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import katImage from '../assets/kat.jpg';
+import chimeSound from '../assets/chime-alert.mp3';
 import AdminMenu from './AdminMenu';
 import './PomodoroTimer.css';
 
@@ -23,18 +24,35 @@ const PomodoroTimer = () => {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   
   const intervalRef = useRef(null);
-  const workTime = settings.workMinutes * 60;
+  const audioRef = useRef(new Audio(chimeSound));  const workTime = settings.workMinutes * 60;
   const breakTime = settings.breakMinutes * 60;
   const longBreakTime = settings.longBreakMinutes * 60;
-
+    // Function to play the chime sound
+  const playChime = () => {
+    audioRef.current.currentTime = 0;
+    audioRef.current.play()
+      .then(() => {
+        // Flash a visual cue when the chime plays
+        const timerContent = document.querySelector('.timer-content');
+        if (timerContent) {
+          timerContent.classList.add('chime-playing');
+          setTimeout(() => {
+            timerContent.classList.remove('chime-playing');
+          }, 1000);
+        }
+      })
+      .catch(err => console.log('Audio play error:', err));
+  };
   useEffect(() => {
     if (isActive && timeLeft > 0) {
       intervalRef.current = setInterval(() => {
         setTimeLeft(time => time - 1);
       }, 1000);
     } else if (timeLeft === 0) {
-      // Timer finished
+      // Timer finished - play chime sound
+      playChime();
       setIsActive(false);
+      
       if (isBreak || isLongBreak) {
         // Break finished, start work session
         setIsBreak(false);
@@ -71,13 +89,13 @@ const PomodoroTimer = () => {
     setCompletedSessions(0);
     setTimeLeft(workTime);
   };
-
   // Navigation functions for admin menu
   const skipToBreak = () => {
     setIsActive(false);
     setIsBreak(true);
     setIsLongBreak(false);
     setTimeLeft(breakTime);
+    playChime(); // Play chime on session switch
   };
 
   const skipToLongBreak = () => {
@@ -85,6 +103,7 @@ const PomodoroTimer = () => {
     setIsBreak(false);
     setIsLongBreak(true);
     setTimeLeft(longBreakTime);
+    playChime(); // Play chime on session switch
   };
 
   const skipToWork = () => {
@@ -92,6 +111,7 @@ const PomodoroTimer = () => {
     setIsBreak(false);
     setIsLongBreak(false);
     setTimeLeft(workTime);
+    playChime(); // Play chime on session switch
   };
 
   const goBackSession = () => {
@@ -99,6 +119,7 @@ const PomodoroTimer = () => {
       setCompletedSessions(completedSessions - 1);
     }
     setIsActive(false);
+    playChime(); // Play chime on session switch
     setIsBreak(false);
     setIsLongBreak(false);
     setTimeLeft(workTime);
@@ -142,6 +163,9 @@ const PomodoroTimer = () => {
   const strokeDashoffset = circumference - (getProgress() / 100) * circumference;
   return (
     <div className="pomodoro-container">
+      {/* Hidden audio element as fallback for mobile devices */}
+      <audio src={chimeSound} style={{ display: 'none' }} />
+      
       {/* Subtle settings icon in corner */}
       <div className="settings-icon" onClick={() => setIsAdminOpen(!isAdminOpen)}>
         ⚙️

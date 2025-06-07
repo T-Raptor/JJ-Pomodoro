@@ -19,6 +19,28 @@
   box-sizing: border-box;
 }
 
+/* Prevent text selection on interactive elements */
+button, 
+.clickable,
+[role="button"],
+.control-btn,
+.session-type span,
+.todo-header,
+.task-checkbox,
+.task-text,
+.delete-btn,
+.time-display,
+.cat-image,
+.settings-icon,
+.expand-icon,
+.close-btn {
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  cursor: pointer;
+}
+
 body {
   margin: 0;
   padding: 0;

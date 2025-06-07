@@ -21,6 +21,9 @@
   margin-bottom: 1rem;
   border-bottom: 2px solid var(--thistle);
   cursor: pointer;
+  user-select: none;
+  /* Prevent blinking cursor */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .todo-header h2 {
@@ -30,12 +33,14 @@
   font-weight: 700;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  user-select: none;
 }
 
 .expand-icon {
   color: #888;
   font-size: 0.9rem;
   transition: transform 0.3s ease;
+  user-select: none;
 }
 
 .expand-icon.expanded {
@@ -56,6 +61,8 @@
   font-size: 1rem;
   font-family: 'Nunito', sans-serif;
   transition: all 0.2s ease;
+  cursor: text;
+  caret-color: var(--peach); /* Customize text cursor color */
 }
 
 .todo-input:focus {
@@ -78,6 +85,10 @@
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 15px rgba(200, 206, 238, 0.4);
+  user-select: none;
+  /* Prevent blinking cursor */
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 .add-btn:hover {
@@ -162,6 +173,9 @@
   cursor: pointer;
   transition: all 0.2s ease;
   background: rgba(255, 255, 255, 0.8);
+  user-select: none;
+  /* Prevent blinking cursor */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .task-item.completed .task-checkbox {
@@ -173,6 +187,7 @@
   color: white;
   font-size: 0.9rem;
   font-weight: bold;
+  user-select: none;
 }
 
 .task-text {
@@ -180,6 +195,7 @@
   font-size: 1rem;
   transition: all 0.2s ease;
   cursor: pointer;
+  user-select: none;
 }
 
 .delete-btn {
@@ -198,6 +214,7 @@
   transition: all 0.2s ease;
   opacity: 0.5;
   margin-left: 8px;
+  user-select: none;
 }
 
 .task-item:hover .delete-btn {

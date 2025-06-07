@@ -40,6 +40,7 @@
   backdrop-filter: blur(10px);
   border: 2px solid rgba(200, 206, 238, 0.3);
   z-index: 100;
+  user-select: none;
 }
 
 .settings-icon:hover {
@@ -150,6 +151,9 @@
   letter-spacing: 2px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+  /* Prevent blinking cursor */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .time-display:hover {
@@ -174,6 +178,13 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   text-transform: uppercase;
   letter-spacing: 1px;
+  user-select: none;
+  /* Prevent blinking cursor */
+  -webkit-tap-highlight-color: transparent;
+  /* Prevent text selection during double-click */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .control-btn.start {
@@ -223,6 +234,9 @@
   transition: all 0.3s ease;
   color: #3a3a3a;
   background: rgba(255, 255, 255, 0.3);
+  user-select: none;
+  /* Prevent blinking cursor */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .session-type span.active {
@@ -423,6 +437,7 @@
   cursor: pointer;
   color: #888;
   transition: color 0.2s ease;
+  user-select: none;
 }
 
 .time-popup .close-btn:hover {
@@ -454,6 +469,9 @@
   font-size: 1.2rem;
   width: 100%;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: text;
+  caret-color: var(--peach); /* Customize text cursor color */
+  user-select: auto; /* Allow text selection inside inputs */
 }
 
 .time-input-group input:focus {
@@ -477,6 +495,10 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  /* Prevent blinking cursor */
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  outline: none;
 }
 
 .time-popup-buttons .apply-btn {

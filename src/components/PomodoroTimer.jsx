@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import katImage from '../assets/kat.jpg';
 import chimeSound from '../assets/chime-alert.mp3';
 import AdminMenu from './AdminMenu';
+import TodoList from './TodoList';
 import './PomodoroTimer.css';
 
 const PomodoroTimer = () => {
@@ -313,14 +314,16 @@ const PomodoroTimer = () => {
           onClick={resetTimer}
         >
           Reset
-        </button>
-      </div>      <div className="session-info">
+        </button>      </div>      <div className="session-info">
         <div className="session-type">
           <span className={!isBreak && !isLongBreak ? 'active' : ''}>Work</span>
           <span className={isBreak ? 'active' : ''}>Break</span>
           <span className={isLongBreak ? 'active' : ''}>Long Break</span>
         </div>
       </div>
+      
+      {/* Todo List Component */}
+      <TodoList />
     </div>
   );
 };

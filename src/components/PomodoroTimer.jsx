@@ -19,12 +19,16 @@ const PomodoroTimer = () => {
   const [isBreak, setIsBreak] = useState(false);
   const [isLongBreak, setIsLongBreak] = useState(false);
   const [completedSessions, setCompletedSessions] = useState(0);
-  
-  // Admin menu state
+    // Admin menu state
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   
+  // Time adjustment popup state
+  const [isTimePopupOpen, setIsTimePopupOpen] = useState(false);
+  const [inputMinutes, setInputMinutes] = useState(0);
+  const [inputSeconds, setInputSeconds] = useState(0);
+  
   const intervalRef = useRef(null);
-  const audioRef = useRef(new Audio(chimeSound));  const workTime = settings.workMinutes * 60;
+  const audioRef = useRef(new Audio(chimeSound));const workTime = settings.workMinutes * 60;
   const breakTime = settings.breakMinutes * 60;
   const longBreakTime = settings.longBreakMinutes * 60;
     // Function to play the chime sound
@@ -152,11 +156,40 @@ const PomodoroTimer = () => {
     }
     return ((totalTime - timeLeft) / totalTime) * 100;
   };
-
   const getSessionType = () => {
     if (isLongBreak) return 'Long Break';
     if (isBreak) return 'Break Time';
     return 'Focus Time';
+  };
+
+  // Open time adjustment popup
+  const openTimePopup = () => {
+    // Initialize with current time values
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    setInputMinutes(mins);
+    setInputSeconds(secs);
+    setIsTimePopupOpen(true);
+  };
+
+  // Apply the adjusted time
+  const applyTimeAdjustment = () => {
+    // Calculate seconds from input
+    const totalSeconds = (inputMinutes * 60) + inputSeconds;
+    
+    // Validate against current session type
+    let maxTime;
+    if (isLongBreak) {
+      maxTime = settings.longBreakMinutes * 60;
+    } else if (isBreak) {
+      maxTime = settings.breakMinutes * 60;
+    } else {
+      maxTime = settings.workMinutes * 60;
+    }
+    
+    // Set time within valid range for current session
+    setTimeLeft(Math.min(totalSeconds, maxTime));
+    setIsTimePopupOpen(false);
   };
 
   const circumference = 2 * Math.PI * 160; // radius = 160
@@ -165,6 +198,49 @@ const PomodoroTimer = () => {
     <div className="pomodoro-container">
       {/* Hidden audio element as fallback for mobile devices */}
       <audio src={chimeSound} style={{ display: 'none' }} />
+      
+      {/* Time adjustment popup */}
+      {isTimePopupOpen && (
+        <div className="time-popup-overlay">
+          <div className="time-popup">
+            <div className="time-popup-header">
+              <h3>Adjust Timer</h3>
+              <button className="close-btn" onClick={() => setIsTimePopupOpen(false)}>×</button>
+            </div>
+            
+            <div className="time-popup-content">
+              <div className="time-input-group">
+                <label htmlFor="minutes">Minutes:</label>
+                <input
+                  id="minutes"
+                  type="number"
+                  min="0"
+                  max={isLongBreak ? settings.longBreakMinutes : (isBreak ? settings.breakMinutes : settings.workMinutes)}
+                  value={inputMinutes}
+                  onChange={(e) => setInputMinutes(Number(e.target.value))}
+                />
+              </div>
+              
+              <div className="time-input-group">
+                <label htmlFor="seconds">Seconds:</label>
+                <input
+                  id="seconds"
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={inputSeconds}
+                  onChange={(e) => setInputSeconds(Number(e.target.value))}
+                />
+              </div>
+              
+              <div className="time-popup-buttons">
+                <button className="apply-btn" onClick={applyTimeAdjustment}>Apply</button>
+                <button className="cancel-btn" onClick={() => setIsTimePopupOpen(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Subtle settings icon in corner */}
       <div className="settings-icon" onClick={() => setIsAdminOpen(!isAdminOpen)}>
@@ -217,10 +293,9 @@ const PomodoroTimer = () => {
             className="progress-circle"
           />
         </svg>
-        
-        <div className="timer-content">
+          <div className="timer-content">
           <img src={katImage} alt="Cat" className="cat-image" />
-          <div className="time-display">
+          <div className="time-display" onClick={openTimePopup}>
             {formatTime(timeLeft)}
           </div>
         </div>

@@ -148,6 +148,13 @@
   border: 3px solid rgba(255, 255, 255, 0.7);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   letter-spacing: 2px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.time-display:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .timer-controls {
@@ -352,6 +359,164 @@
   .control-btn {
     width: 130px;
     padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Time Popup Styles */
+.time-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(247, 229, 183, 0.2); /* Wheat color with transparency */
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.time-popup {
+  background: white;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 3px solid var(--periwinkle);
+  animation: popup-appear 0.3s ease;
+}
+
+@keyframes popup-appear {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.time-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--thistle);
+  padding-bottom: 0.8rem;
+}
+
+.time-popup-header h3 {
+  margin: 0;
+  color: #2c2c2c;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.time-popup .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.time-popup .close-btn:hover {
+  color: #444;
+}
+
+.time-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.time-input-group label {
+  font-weight: 600;
+  color: #444;
+  font-size: 1rem;
+}
+
+.time-input-group input {
+  padding: 0.8rem;
+  border: 2px solid var(--periwinkle);
+  border-radius: 8px;
+  font-size: 1.2rem;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.time-input-group input:focus {
+  outline: none;
+  border-color: var(--peach);
+  box-shadow: 0 0 0 2px rgba(255, 198, 151, 0.3);
+}
+
+.time-popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.time-popup-buttons button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-popup-buttons .apply-btn {
+  background: linear-gradient(135deg, var(--sage) 0%, var(--periwinkle) 100%);
+  color: #1a1a1a;
+}
+
+.time-popup-buttons .cancel-btn {
+  background: linear-gradient(135deg, var(--thistle) 0%, var(--wheat) 100%);
+  color: #1a1a1a;
+}
+
+.time-popup-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.time-popup-buttons button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive styles for time popup */
+@media (max-width: 480px) {
+  .time-popup {
+    width: 95%;
+    padding: 1.2rem;
+  }
+  
+  .time-popup-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .time-input-group input {
+    padding: 0.6rem;
+    font-size: 1rem;
+  }
+  
+  .time-popup-buttons button {
+    padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
   }
 }
